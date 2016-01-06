@@ -24,6 +24,13 @@
         .fa-btn {
             margin-right: 6px;
         }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-weight: 100;
+            font-size: 96px;
+        }
     </style>
 </head>
 <body id="app-layout">
