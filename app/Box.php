@@ -2,10 +2,11 @@
 
 namespace App;
 
+use App\User;
+use App\Voter;
 use Illuminate\Database\Eloquent\Model;
 
-class Box extends Model
-{
+class Box extends Model {
     /**
     * The attributes that are mass assignable.
     *
@@ -13,8 +14,11 @@ class Box extends Model
     */
     protected $fillable = ['name'];
 
-    public function voters()
-    {
+    public function voters() {
         return $this->hasMany(Voter::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

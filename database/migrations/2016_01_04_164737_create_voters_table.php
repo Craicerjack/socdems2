@@ -19,6 +19,9 @@ class CreateVotersTable extends Migration
             $table->string('address_st');
             $table->string('address_town');
             $table->string('electoral_div');
+            $table->string('electoral_area');
+            $table->string('postcode');
+            $table->string('eircode');
             $table->string('voting_rights');
             $table->string('first_name');
             $table->string('last_name');

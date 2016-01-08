@@ -2,18 +2,18 @@
 
 namespace App;
 
+use App\User;
+use App\Voter;
 use Illuminate\Database\Eloquent\Model;
 
-class Contact extends Model
-{
-    protected $fillable = ['name'];
+class Contact extends Model {
 
     /**
      * Get the user that owns the task.
      */
     public function volunteer()
     {
-        return $this->belongsTo(Volunteer::class);
+        return $this->belongsTo(User::class);
     }
     public function voter()
     {

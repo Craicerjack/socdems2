@@ -30,6 +30,14 @@
         .title {
             font-weight: 100;
             font-size: 96px;
+            color: #752f8b;
+        }
+        .navbar-header {
+            color: #752f8b;
+        }
+        .navbar-default .navbar-brand,
+        .navbar-default .navbar-nav > li > a {
+            color: #752f8b;
         }
     </style>
 </head>
@@ -61,24 +69,26 @@
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
-                    @if (Auth::guest())
-                        <li><a href="/login">Login</a></li>
-                        <li><a href="/register">Register</a></li>
-                    @else
+                    @if (Auth::check())
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                {{ Auth::user()->name }} <span class="caret"></span>
+                                {{ Auth::user()->first_name }} <span class="caret"></span>
                             </a>
-
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="/logout"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                                <li><a href="auth/logout"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
                             </ul>
+                        </li>
+                    @else
+                        <li><a href="/auth/login">Login</a></li>
+                        <li><a href="/auth/register">Register</a></li>
                     @endif
                 </ul>
             </div>
         </div>
     </nav>
-
+    <div class="container spark-screen">
+        <div class="title">Social Democrats Galway</div>
+    </div>
     @yield('content')
 
     <!-- JavaScripts -->

@@ -3,9 +3,7 @@
 use App\Box;
 use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,31 +17,21 @@ Route::get('/', function () {
 */
 
 Route::group(['middleware' => ['web']], function () {
+    Route::get('/', function () { return view('welcome'); });
 
-    // Route::get('/login', function () { return view('login');});
+    // Box Routes
+    Route::get('/boxes', 'BoxController@index');
+    Route::post('/boxes', 'BoxController@store');
+    Route::delete('/box/{box}', 'BoxController@destroy');
 
-    // List all boxes
-    Route::get('/boxes', function () {
-        $boxes = Box::orderBy('created_at', 'asc')->get();
-        return view('box', ['boxes' => $boxes]);
-    });
-    // Add new box
-    Route::post('/boxes', function (Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-        ]);
-        if ($validator->fails()) {
-            return redirect('/boxes')->withInput()->withErrors($validator);
-        }
-        $box = new Box;
-        $box->name = $request->name;
-        $box->save();
-        return redirect('/boxes');
-    });
-    // Delete a box
-    Route::delete('/box/{box}', function (Box $box) {
-        $box->delete();
-        return redirect('/boxes');
-    });
+    Route::get('/upload', function() { return view('upload'); });
+    Route::post('/upload', 'UploadController@upload' );
 
+    // Authentication Routes...
+    Route::get('auth/login', 'Auth\AuthController@getLogin');
+    Route::post('auth/login', 'Auth\AuthController@postLogin');
+    Route::get('auth/logout', 'Auth\AuthController@getLogout');
+    // Registration Routes...
+    Route::get('auth/register', 'Auth\AuthController@getRegister');
+    Route::post('auth/register', 'Auth\AuthController@postRegister');
 });

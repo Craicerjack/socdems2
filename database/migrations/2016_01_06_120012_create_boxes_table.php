@@ -14,8 +14,9 @@ class CreateBoxesTable extends Migration
     {
         Schema::create('boxes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('district');
+            $table->string('constituency');
             $table->timestamps();
         });
     }
