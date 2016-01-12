@@ -11,6 +11,33 @@
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/contacts') }}">
                         {!! csrf_field() !!}
 
+                        @if (count($users) > 0)
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Pick User:</label>
+                            <div class="col-md-6">
+                                <select class="form-control">
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user['id'] }}">{{ $user['first_name'] }} {{ $user['last_name']}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if (count($addresses) > 0)
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Pick Address:</label>
+                            <div class="col-md-6">
+                                <select id="address-list" class="form-control">
+                                    @foreach ($addresses as $address)
+                                        {{ $new_ad = $address['address_st'].", ".$address['address_no'] }}
+                                        <option value="{{ $address['id'] }}">{{ $new_ad }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+
                         <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Date</label>
                             <div class="col-md-6">
@@ -21,34 +48,32 @@
                         <div class="form-group{{ $errors->has('result') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Result</label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="result" value="{{ old('result') }}">
-                                @if ($errors->has('result'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('result') }}</strong>
-                                    </span>
-                                @endif
+                                <select class="form-control">
+                                    <option value="NI">Not In</option>
+                                    <option value="SC">Short Chat</option>
+                                    <option value="LC">Long Chat</option>
+                                    <option value="NV">Other</option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group{{ $errors->has('support_lvl') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Support Level</label>
-
                             <div class="col-md-6">
-                                <input type="support_lvl" class="form-control" name="support_lvl" value="{{ old('support_lvl') }}">
-
-                                @if ($errors->has('support_lvl'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('support_lvl') }}</strong>
-                                    </span>
-                                @endif
+                                <select class="form-control">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group{{ $errors->has('notes') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Notes</label>
-
                             <div class="col-md-6">
-                            <textarea rows="3" cols="20" class="form-control" name="notes">Notes...</textarea>:
+                            <textarea rows="10" class="form-control" name="notes">Notes...</textarea>
                             </div>
                         </div>
 
@@ -64,9 +89,6 @@
             </div>
         </div>
     </div>
-
-
-
 
     <!-- Current Tasks -->
     @if (count($contacts) > 0)
@@ -96,6 +118,10 @@
 
 
 </div>
-
+@endsection
+@section('scripts')
+<script type="text/javascript">
+  $('#address-list').select2();
+</script>
     <!-- TODO: Current Tasks -->
 @endsection

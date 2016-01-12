@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Contact;
+use App\Address;
+use App\User;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -20,6 +22,8 @@ class ContactController extends Controller
 
     public function index(Request $request) {
         return view('contacts.index', [
+            'users' => User::orderBy('created_at', 'asc')->get(),
+            'addresses' => Address::orderBy('created_at', 'asc')->get(),
             'contacts' => $this->contacts->getContacts(),
         ]);
     }

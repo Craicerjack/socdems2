@@ -20,6 +20,7 @@ class CreateAddressesTable extends Migration
             $table->string('electoral_area');
             $table->string('postcode');
             $table->string('eircode');
+            $table->string('check');
 
             $table->integer('box_id')->index();
             $table->integer('voter_id')->index();

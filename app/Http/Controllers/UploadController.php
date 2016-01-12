@@ -31,7 +31,7 @@ class UploadController extends Controller {
         return $box;
     }
 
-    public function createAddress($data, $boxId) {
+    public function createAddress($data, $boxId, $adcheck) {
         $address = new Address();
         $address->address_no = trim($data[4]);
         $address->address_st = trim($data[5]);
@@ -46,13 +46,15 @@ class UploadController extends Controller {
         return $address;
     }
 
-    public function createVoter($data, $addressId) {
+    public function createVoter($data, $addressId, $address) {
+        Log::info(array($address, $data[1], $data[2]));
         $voter = new Voter();
         $voter->first_name = trim($data[1]);
         $voter->last_name = trim($data[2]);
-        $voter->unique_id = trim($data[1].$data[2].$data[8]);
         $voter->voting_rights = trim($data[3]);
         $voter->address = $addressId;
+        $voter->save();
+        $voter->unique_id = $voter->id.trim($data[1]).trim($data[2]).$address;
         $voter->save();
         return $voter;
     }
@@ -69,21 +71,23 @@ class UploadController extends Controller {
 
                     // check if box exists - if not create
                     $box = Box::where('name', '=', $data[12])->first();
-                    if ($box === null) { $box = createBox($data); }
+                    if ($box === null) { $box = $this->createBox($data); }
 
                     // check if address exists - if not create
-                    $adcheck = trim($data[4]).trim($data[5]).trim($data[6]);
-                    $address = Address::where('check', '=', $adcheck->first());
-                    if ($address === null) { $address = createAddress($data, $box->id); }
+                    $adcheck = trim($data[4]) ." ". trim($data[5]) ." ".trim($data[6]);
+                    $address = Address::where('check', '=', $adcheck)->first();
+                    if ($address === null) { $address = $this->createAddress($data, $box->id, $adcheck); }
 
-                    // check if address exists - if not create
-                    if (!Voter::where('unique_id', '=', $data[12])->exists()) { $voter = createVoter($data, $address->id); }
+                    // check if voter exists - if not $this->create
+                    if (!Voter::where('unique_id', '=', $data[12])->exists()) {
+                        $voter = $this->createVoter($data, $address->id, $adcheck);
+                    }
                 }
             }
             return redirect('/boxes');
 
         } catch (Illuminate\Filesystem\FileNotFoundException $exception) {
-            return redirect('/errors.404')
+            return view('errors.404');
         }
     }
 }
