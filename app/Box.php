@@ -3,7 +3,7 @@
 namespace App;
 
 use App\User;
-use App\Voter;
+use App\Address;
 use Illuminate\Database\Eloquent\Model;
 
 class Box extends Model {
@@ -15,7 +15,7 @@ class Box extends Model {
     protected $fillable = ['name'];
 
     public function voters() {
-        return $this->hasMany(Voter::class);
+        return $this->hasMany(Address::class);
     }
 
     public function user() {

@@ -3,8 +3,6 @@
 use App\Box;
 use Illuminate\Http\Request;
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -19,6 +17,9 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => ['web']], function () {
     Route::get('/', function () { return view('welcome'); });
 
+    Route::get('/users', 'UserController@index');
+    Route::post('/users', 'UserController@store');
+    Route::delete('/user/{user}', 'UserController@destroy');
     // Box Routes
     Route::get('/boxes', 'BoxController@index');
     Route::post('/boxes', 'BoxController@store');
@@ -26,6 +27,10 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/upload', function() { return view('upload'); });
     Route::post('/upload', 'UploadController@upload' );
+
+    Route::get('/contacts', 'ContactController@index');
+    Route::post('/contacts', 'ContactController@store');
+    Route::delete('/contact/{contact}', 'ContactController@destroy');
 
     // Authentication Routes...
     Route::get('auth/login', 'Auth\AuthController@getLogin');

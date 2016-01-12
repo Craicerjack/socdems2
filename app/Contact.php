@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model {
 
-    /**
-     * Get the user that owns the task.
-     */
     public function volunteer()
     {
         return $this->belongsTo(User::class);

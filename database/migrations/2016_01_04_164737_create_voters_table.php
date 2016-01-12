@@ -10,23 +10,13 @@ class CreateVotersTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('voters', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('unique_id')->unique();
-            $table->string('address_no');
-            $table->string('address_st');
-            $table->string('address_town');
-            $table->string('electoral_div');
-            $table->string('electoral_area');
-            $table->string('postcode');
-            $table->string('eircode');
             $table->string('voting_rights');
             $table->string('first_name');
             $table->string('last_name');
-
-            $table->integer('box_id')->index();
 
             $table->rememberToken();
             $table->timestamps();
@@ -38,8 +28,7 @@ class CreateVotersTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::drop('voters');
     }
 }
