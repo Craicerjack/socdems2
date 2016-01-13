@@ -35,12 +35,17 @@
                 font-size: 72px;
                 margin-bottom: 40px;
             }
+            .link {
+                text-decoration: none;
+                font-size: 50px;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="content">
                 <div class="title">Just like U2, we still havent found what youre looking for.</div>
+                <div><a href="{{ url('/') }}" class="link">Bring me home... :(</a></div>
             </div>
         </div>
     </body>

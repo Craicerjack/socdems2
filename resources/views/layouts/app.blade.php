@@ -54,7 +54,7 @@
                 </button>
 
                 <!-- Branding Image -->
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="{{ url('/') }}">
                     Social Democrats
                 </a>
             </div>
@@ -62,7 +62,7 @@
             <div class="collapse navbar-collapse" id="spark-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{{ url('/') }}">Home</a></li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -74,12 +74,15 @@
                                 {{ Auth::user()->first_name }} <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="auth/logout"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                                <li><a href="{{ url('/contacts') }}"></i>Contacts</a></li>
+                                <li><a href="{{ url('/boxes') }}"></i>Boxes</a></li>
+                                <li><a href="{{ url('/upload') }}"></i>Upload</a></li>
+                                <li><a href="{{ url('/auth/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
                             </ul>
                         </li>
                     @else
-                        <li><a href="/auth/login">Login</a></li>
-                        <li><a href="/auth/register">Register</a></li>
+                        <li><a href="{{ url('/auth/login') }}">Login</a></li>
+                        <li><a href="{{ url('/auth/register') }}">Register</a></li>
                     @endif
                 </ul>
             </div>

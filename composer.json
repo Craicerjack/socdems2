@@ -30,20 +30,20 @@
     },
     "scripts": {
         "post-root-package-install": [
-            "/usr/bin/php -r \"copy('.env.example', '.env');\""
+            "/usr/bin/php-cli -r \"copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "/usr/bin/php artisan key:generate"
+            "/usr/bin/php-cli artisan key:generate"
         ],
         "post-install-cmd": [
-            "/usr/bin/php artisan clear-compiled",
-            "/usr/bin/php artisan optimize"
+            "/usr/bin/php-cli artisan clear-compiled",
+            "/usr/bin/php-cli artisan optimize"
         ],
         "pre-update-cmd": [
-            "/usr/bin/php artisan clear-compiled"
+            "/usr/bin/php-cli artisan clear-compiled"
         ],
         "post-update-cmd": [
-            "/usr/bin/php artisan optimize"
+            "/usr/bin/php-cli artisan optimize"
         ]
     },
     "config": {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contact;
 use App\Address;
 use App\User;
+use Log;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -21,28 +22,39 @@ class ContactController extends Controller
     }
 
     public function index(Request $request) {
+        // $contacts = Contact::with('address', 'user')->getContacts();
+        // return view('contacts.index', compact($contacts));
         return view('contacts.index', [
-            'users' => User::orderBy('created_at', 'asc')->get(),
-            'addresses' => Address::orderBy('created_at', 'asc')->get(),
             'contacts' => $this->contacts->getContacts(),
         ]);
     }
 
+    public function addContact(Request $request) {
+        return view('contacts.add', [
+            'users' => User::orderBy('created_at', 'asc')->get(),
+            'addresses' => Address::orderBy('created_at', 'asc')->get(),
+        ]);
+    }
+
+    public function editContact(Request $request, Contact $contact) {
+        return view('contacts.add', [
+            'contact' => $contact,
+        ]);
+    }
+
     public function store(Request $request) {
+        Log::info($request);
         $this->validate($request, [
-            // 'name' => 'required|max:255',
             'date' => 'required',
             'result' => 'required',
         ]);
-        // $request->user()->boxes()->create([
-        //     'name' => $request->name,
-        // ]);
-        $request->user()->contacts()->create([
-            'date' => $request->date,
-            'result' => $request->result,
-            'support_lvl' => $request->support_lvl,
-            'notes' => $request->notes
-        ]);
+        $contact = new Contact();
+        $contact->date = $request->date;
+        $contact->result = $request->result;
+        $contact->support_lvl = $request->support_lvl;
+        $contact->notes = $request->notes;
+        $contact->user_id = $request->user_id;
+        $contact->address_id = $request->address;
         $contact->save();
         return redirect('/contacts');
     }

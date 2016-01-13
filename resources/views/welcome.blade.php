@@ -11,7 +11,7 @@
             <h2>Account</h2>
             <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
         </div></a>
-        <a href="/contacts"><div class="col-xs-3 dash-unit">
+        <a href="{{ url('/contacts') }}"><div class="col-xs-3 dash-unit">
             <h2>Contact</h2>
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
         </div></a>
@@ -25,11 +25,11 @@
             <h2>Voter</h2>
             <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
         </div>
-        <a href="/upload"><div class="col-xs-3 dash-unit">
+        <a href="{{ url('/upload') }}"><div class="col-xs-3 dash-unit">
             <h2>Uploads</h2>
             <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
         </div></a>
-        <a href="/boxes"><div class="col-xs-3 dash-unit">
+        <a href="{{ url('/boxes') }}"><div class="col-xs-3 dash-unit">
             <h2>Boxes</h2>
             <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
         </div></a>

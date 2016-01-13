@@ -14,9 +14,6 @@ class ContactPolicy {
      *
      * @return void
      */
-    public function __construct() {
-        //
-    }
 
     public function destroy(User $user, Contact $contact) {
         return $user->id === $contact->user_id;

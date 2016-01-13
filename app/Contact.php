@@ -3,17 +3,19 @@
 namespace App;
 
 use App\User;
-use App\Voter;
+use App\Address;
 use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model {
 
-    public function volunteer()
+    protected $fillable = ['date', 'result', 'support_lvl', 'notes'];
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function voter()
+    public function address()
     {
-        return $this->belongsTo(Voter::class);
+        return $this->belongsTo(Address::class);
     }
 }

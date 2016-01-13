@@ -105,4 +105,22 @@
     padding: 1em 0 0 0 ;
     font-size: 5em;
 }
+.theaders {
+    text-align: center;
+}
+.tders {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.contact-unit {
+    margin: 0 8px 15px 8px;
+    padding: 5px;
+    border: 1px solid #383737;
+    color:#752f8b;
+    height:150px;
+    border-radius: 6px;
+}
+
 
