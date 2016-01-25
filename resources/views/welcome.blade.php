@@ -11,7 +11,7 @@
             <h2>Account</h2>
             <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
         </div></a>
-        <a href="{{ url('/contacts') }}"><div class="col-xs-3 dash-unit">
+        <a href="{{ url('/contacts/add') }}"><div class="col-xs-3 dash-unit">
             <h2>Contact</h2>
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
         </div></a>

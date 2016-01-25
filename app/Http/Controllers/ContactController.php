@@ -9,6 +9,7 @@ use Log;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+
 use App\Http\Controllers\Controller;
 use App\Repositories\ContactRepository;
 
@@ -21,6 +22,10 @@ class ContactController extends Controller
         $this->contacts = $contacts;
     }
 
+    public function getLocale() {
+        Log::info($this);
+    }
+
     public function index(Request $request) {
         // $contacts = Contact::with('address', 'user')->getContacts();
         // return view('contacts.index', compact($contacts));
@@ -29,10 +34,30 @@ class ContactController extends Controller
         ]);
     }
 
+    public function returnJson(Request $request) {
+        try{
+           $statusCode = 200;
+           $addresses = Address::orderBy('created_at', 'asc')->get();
+       } catch (Exception $e) {
+           $statusCode = 400;
+       } finally {
+           return response()->json($addresses);
+       }
+    }
+
     public function addContact(Request $request) {
+        $addresses = Address::orderBy('created_at', 'asc')->get();
+        $locale = array();
+
+        foreach ($addresses as $add) {
+            ($add['address_town'] == '') ? $at = $add["address_st"] : $at = $add['address_town'];
+            array_push($locale, $at);
+        }
+        $locale = array_unique($locale);
         return view('contacts.add', [
             'users' => User::orderBy('created_at', 'asc')->get(),
-            'addresses' => Address::orderBy('created_at', 'asc')->get(),
+            'addresses' => $addresses,
+            'locale' => $locale,
         ]);
     }
 
@@ -43,7 +68,19 @@ class ContactController extends Controller
     }
 
     public function store(Request $request) {
+
         Log::info($request);
+
+        // set the locale
+        $addresses = Address::orderBy('created_at', 'asc')->get();
+        $locale = array();
+        foreach ($addresses as $add) {
+            ($add['address_town'] == '') ? $at = $add["address_st"] : $at = $add['address_town'];
+            array_push($locale, $at);
+        }
+        $locale = array_unique($locale);
+
+
         $this->validate($request, [
             'date' => 'required',
             'result' => 'required',
@@ -55,8 +92,16 @@ class ContactController extends Controller
         $contact->notes = $request->notes;
         $contact->user_id = $request->user_id;
         $contact->address_id = $request->address;
-        $contact->save();
-        return redirect('/contacts');
+        // $contact->save();
+
+
+        return view('contacts.add', [
+            'users' => User::orderBy('created_at', 'asc')->get(),
+            'addresses' => $addresses,
+            'locale' => $locale,
+        ]);
+
+
     }
 
     public function destroy(Request $request, Contact $contact) {

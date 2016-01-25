@@ -5,16 +5,17 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Contact</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/contacts') }}">
-                        {!! csrf_field() !!}
+            <h2>Contact</h2>
+            <form class="form-horizontal" role="form" method="POST" action="{{ url('/contacts') }}">
+                {!! csrf_field() !!}
 
+                <div class="panel panel-default">
+                    <div class="panel-heading">Contact Basic</div>
+                    <div class="panel-body">
                         <div class="form-group">
                             <label class="col-md-4 control-label">Pick User:</label>
                             <div class="col-md-6">
-                                <select class="form-control" name='user_id'>
+                                <select id="user-list" class="form-control" name='user_id'>
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}" >{{ $user['first_name'] }} {{ $user['last_name']}}</option>
                                     @endforeach
@@ -25,11 +26,18 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">Pick Address:</label>
                             <div class="col-md-6">
-                                <select id="address-list" class="form-control" name="address">
-                                    @foreach ($addresses as $address)
-                                        {{ $new_ad = $address['address_st'].", ".$address['address_no'] }}
-                                        <option value="{{ $address->id }}" >{{ $new_ad }}</option>
+                                <select id="address-list-1" class="form-control" name="address">
+                                    @foreach ($locale as $loc)
+                                        <option value="{{ $loc }}" >{{ $loc }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Pick Address:</label>
+                            <div class="col-md-6">
+                                <select id="address-list-2" class="form-control" name="address">
                                 </select>
                             </div>
                         </div>
@@ -40,6 +48,13 @@
                                 <input type="date" class="form-control" name="date" value="{{ old('date') }}">
                             </div>
                         </div>
+
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Contact Specific</div>
+                    <div class="panel-body">
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Result</label>
@@ -78,16 +93,83 @@
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-btn fa-user"></i>Submit</button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 @endsection
 @section('scripts')
 <script type="text/javascript">
-  $('#address-list').select2();
+
+    function addressMatch(value) {
+        var check = $('#address-list-1').val();
+        if ( value.address_st.indexOf(check) !== -1 || value.address_town.indexOf(check) !== -1 ) {
+            return value;
+        }
+    }
+
+    $.get("http://localhost/~carlos/laravel/public/api/contacts").then(function( data, status, jqXHR ){
+        var addresses = [];
+        var returnData = data.filter(addressMatch);
+        returnData.forEach(function(item) {
+            var value = { "id": item.id, "text": item.address_st+", "+item.address_no }
+            console.log(value);
+            addresses.push(value);
+        });
+        return addresses;
+    }).then( function(addresses) {
+        $('#address-list-1').select2();
+        $('#address-list-2').select2({
+            data: addresses,
+            tags: "true",
+            placeholder: "Select an option",
+        });
+        $('#user-list').select2({
+            tags: true
+        });
+    });
+
+
+    var addresses = [], addressList = [];
+    $.get("http://localhost/~carlos/laravel/public/api/contacts").then(function( data, status, jqXHR ){
+        data.forEach(function(item) {
+            addressList.push(item);
+        });
+    });
+    console.log(addressList);
+
+    function addressMatch(value) {
+        var check = $('#address-list-1').val();
+        if ( value.address_st.indexOf(check) !== -1 || value.address_town.indexOf(check) !== -1 ) {
+            return value;
+        }
+    }
+
+    $( "#address-list-1" ).change(function() {
+        addresses = [];
+        var returnData = addressList.filter(addressMatch);
+        returnData.forEach(function(item) {
+            var value = { "id": item.id, "text": item.address_st+", "+item.address_no }
+            addresses.push(value);
+        });
+        console.log("adds - ", addresses);
+        $('#address-list-2').select2().empty();
+        $('#address-list-2').select2({ data: addresses});
+
+    });
+
+    $('#address-list-1').select2();
+    $('#address-list-2').select2({
+        data: addresses,
+        tags: "true",
+        placeholder: "Select an option",
+    });
+    $('#user-list').select2({
+        tags: true
+    });
+
 </script>
     <!-- TODO: Current Tasks -->
 @endsection

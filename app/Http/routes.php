@@ -29,6 +29,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/upload', 'UploadController@upload' );
 
     Route::get('/contacts', 'ContactController@index');
+    Route::get('/api/contacts', 'ContactController@returnJson');
     Route::get('/contacts/add', 'ContactController@addContact');
     Route::get('/contacts/edit/{contact}', 'ContactController@editContact');
     Route::post('/contacts', 'ContactController@store');

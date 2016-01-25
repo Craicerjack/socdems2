@@ -33,7 +33,7 @@ class UploadController extends Controller {
 
     public function createAddress($data, $boxId, $adcheck) {
         $address = new Address();
-        $address->address_no = trim($data[4]);
+        $address->address_no = trim($data[3]).", ".trim($data[4]);
         $address->address_st = trim($data[5]);
         $address->address_town = trim($data[6]);
         $address->electoral_div = trim($data[10]);
@@ -49,42 +49,92 @@ class UploadController extends Controller {
     public function createVoter($data, $addressId, $address) {
         Log::info(array($address, $data[1], $data[2]));
         $voter = new Voter();
-        $voter->first_name = trim($data[1]);
-        $voter->last_name = trim($data[2]);
-        $voter->voting_rights = trim($data[3]);
+        $voter->first_name = trim($data[0]);
+        $voter->last_name = trim($data[1]);
+        $voter->voting_rights = trim($data[2]);
         $voter->address = $addressId;
         $voter->save();
-        $voter->unique_id = $voter->id.trim($data[1]).trim($data[2]).$address;
+        $voter->unique_id = $voter->id.trim($data[0]).trim($data[1]).$address;
         $voter->save();
         return $voter;
+    }
+
+    public function sortFirstField($firstField) {
+        // After exploding the data is in a couple of formats
+        // split by spaces
+        // 0 => '501 Donal',
+        // 0 => '504 Bernard McGlinchey',
+        // 0 => '518 Kenneth McTigue P',
+        // 0 => '523 Ruadhan O Nidh',
+        // 0 => '563 Camille Guimier A',
+        // needed to format this to a regular format
+        $register_no =array_shift($firstField);
+        if (count($firstField) > 2) {
+            $last = array_pop($firstField);
+            if (strlen($last) > 2) {
+                $a = array( 'first_name' => $firstField[0]." ".$firstField[1], 'last_name' => $last );
+            } else {
+                $a = array( 'first_name' => $firstField[0], 'last_name' => $firstField[1], 'voting_rights' => $last );
+            }
+        } elseif (count($firstField) > 1) {
+            if (strlen($firstField[1]) > 2) {
+                $a = array( 'first_name' => $firstField[0], 'last_name' => $firstField[1] );
+            } else {
+                $a = array( 'first_name' => $firstField[0]." ".$firstField[1] );
+            }
+        } else {
+            $a = array( 'first_name' => $firstField[0], );
+        }
+        return $a;
     }
 
     public function upload(Request $request) {
         try {
             $filename = $request->file('userfile')->getClientOriginalName();
+            $extension = File::extension($filename);
             $path = public_path();
             $request->file('userfile')->move($path.'/uploads', $filename);
             if ( ($handle = fopen(public_path().'/uploads/'.$filename, 'r')) !== FALSE ) {
-                //get rid of first line of csv
-                fgetcsv($handle, 10000, ",");
                 while ( ($data = fgetcsv($handle, 1000, ',')) !==FALSE ) {
+                    // Voter
+                    // data[0] = first name
+                    // data[1] = last name
+                    // data[2] = voting rights
 
+                    // addresses
+                    // data[3] = house name
+                    // data[4] = house number
+                    // data[5] = townland
+                    // data[6] = qualifier
+                    // data[7] = postcode
+                    // data[8] = eircode
+                    // data[10] = electoral division
+                    // data[11] = electoral area
+
+                    // boxes
+                    // data[9] = polling district
+                    // data[12] = polling station
+                    // data[13] = dail constituency
                     // check if box exists - if not create
                     $box = Box::where('name', '=', $data[12])->first();
                     if ($box === null) { $box = $this->createBox($data); }
 
-                    // check if address exists - if not create
+                    // // check if address exists - if not create
                     $adcheck = trim($data[4]) ." ". trim($data[5]) ." ".trim($data[6]);
                     $address = Address::where('check', '=', $adcheck)->first();
                     if ($address === null) { $address = $this->createAddress($data, $box->id, $adcheck); }
 
-                    // check if voter exists - if not $this->create
-                    if (!Voter::where('unique_id', '=', $data[12])->exists()) {
-                        $voter = $this->createVoter($data, $address->id, $adcheck);
-                    }
+                    // // create voter
+                    $voter = $this->createVoter($data, $address->id, $adcheck);
                 }
+                \Session::flash('flash_message','Upload Complete');
+                return view('upload');
+            } else {
+                return view('errors.404');
             }
-            return redirect('/boxes');
+
+
+            // return redirect('/boxes');
 
         } catch (Illuminate\Filesystem\FileNotFoundException $exception) {
             return view('errors.404');

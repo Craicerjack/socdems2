@@ -4,24 +4,19 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <a href="{{ url('/contacts/add') }}" class="btn btn-info">Add</a>
-                </div>
-            </div>
-        </div>
+        <a href="{{ url('/contacts/add') }}" class=" col-md-4 col-md-offset-4 btn btn-info">Add a Contact</a>
+        <br/>
+        <br/>
+
     </div>
 </div>
 
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">Contacts</div>
-
-                <!-- Current Tasks -->
-                @if (count($contacts) > 0)
+            @if (count($contacts) > 0)
+                <div class="panel panel-default">
+                    <div class="panel-heading">Contacts</div>
                     <div class="panel-body">
                         <table class="table table-striped task-table">
                             <thead>
@@ -46,8 +41,8 @@
                             </tbody>
                         </table>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>
