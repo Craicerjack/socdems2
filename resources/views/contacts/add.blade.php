@@ -13,7 +13,7 @@
                     <div class="panel-heading">Contact Basic</div>
                     <div class="panel-body">
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Pick User:</label>
+                            <label class="col-md-4 control-label">Choose User:</label>
                             <div class="col-md-6">
                                 <select id="user-list" class="form-control" name='user_id'>
                                     @foreach ($users as $user)
@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">Pick Address:</label>
+                            <label class="col-md-4 control-label">Choose Area:</label>
                             <div class="col-md-6">
                                 <select id="address-list-1" class="form-control" name="address">
                                     @foreach ($locale as $loc)
@@ -34,18 +34,10 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">Pick Address:</label>
-                            <div class="col-md-6">
-                                <select id="address-list-2" class="form-control" name="address">
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Date</label>
                             <div class="col-md-6">
-                                <input type="date" class="form-control" name="date" value="{{ old('date') }}">
+                                <input type="date" class="form-control" name="date" value="{{ $sesh['date'] }}">
                             </div>
                         </div>
 
@@ -55,6 +47,14 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Contact Specific</div>
                     <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Choose Address:</label>
+                            <div class="col-md-6">
+                                <select id="address-list-2" class="form-control" name="address">
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">Result</label>
@@ -101,75 +101,6 @@
 </div>
 @endsection
 @section('scripts')
-<script type="text/javascript">
-
-    function addressMatch(value) {
-        var check = $('#address-list-1').val();
-        if ( value.address_st.indexOf(check) !== -1 || value.address_town.indexOf(check) !== -1 ) {
-            return value;
-        }
-    }
-
-    $.get("http://localhost/~carlos/laravel/public/api/contacts").then(function( data, status, jqXHR ){
-        var addresses = [];
-        var returnData = data.filter(addressMatch);
-        returnData.forEach(function(item) {
-            var value = { "id": item.id, "text": item.address_st+", "+item.address_no }
-            console.log(value);
-            addresses.push(value);
-        });
-        return addresses;
-    }).then( function(addresses) {
-        $('#address-list-1').select2();
-        $('#address-list-2').select2({
-            data: addresses,
-            tags: "true",
-            placeholder: "Select an option",
-        });
-        $('#user-list').select2({
-            tags: true
-        });
-    });
-
-
-    var addresses = [], addressList = [];
-    $.get("http://localhost/~carlos/laravel/public/api/contacts").then(function( data, status, jqXHR ){
-        data.forEach(function(item) {
-            addressList.push(item);
-        });
-    });
-    console.log(addressList);
-
-    function addressMatch(value) {
-        var check = $('#address-list-1').val();
-        if ( value.address_st.indexOf(check) !== -1 || value.address_town.indexOf(check) !== -1 ) {
-            return value;
-        }
-    }
-
-    $( "#address-list-1" ).change(function() {
-        addresses = [];
-        var returnData = addressList.filter(addressMatch);
-        returnData.forEach(function(item) {
-            var value = { "id": item.id, "text": item.address_st+", "+item.address_no }
-            addresses.push(value);
-        });
-        console.log("adds - ", addresses);
-        $('#address-list-2').select2().empty();
-        $('#address-list-2').select2({ data: addresses});
-
-    });
-
-    $('#address-list-1').select2();
-    $('#address-list-2').select2({
-        data: addresses,
-        tags: "true",
-        placeholder: "Select an option",
-    });
-    $('#user-list').select2({
-        tags: true
-    });
-
-</script>
+<script type="text/javascript" src="{{ URL::asset('js/contact.js') }}"></script>
     <!-- TODO: Current Tasks -->
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contact;
 use App\Address;
 use App\User;
+
 use Log;
 use Illuminate\Http\Request;
 
@@ -69,7 +70,17 @@ class ContactController extends Controller
 
     public function store(Request $request) {
 
-        Log::info($request);
+        if( is_numeric( $request->user_id ) == false){
+            $name = explode(" ", $request->user_id);
+            $user = User::where('email', '=', $name[0].$name[1]."@example.com")->first();
+            if ($user === null){
+                $user = new User();
+                $user->first_name = $name[0];
+                if (count($name) > 1) { $user->last_name = $name[1]; }
+                $user->email = $name[0].$name[1]."@example.com";
+                $user->save();
+            }
+        }
 
         // set the locale
         $addresses = Address::orderBy('created_at', 'asc')->get();
@@ -79,7 +90,6 @@ class ContactController extends Controller
             array_push($locale, $at);
         }
         $locale = array_unique($locale);
-
 
         $this->validate($request, [
             'date' => 'required',
@@ -92,16 +102,20 @@ class ContactController extends Controller
         $contact->notes = $request->notes;
         $contact->user_id = $request->user_id;
         $contact->address_id = $request->address;
-        // $contact->save();
+        $contact->save();
 
+        $loc = Address::where('id', $request->address )->first();
+        if ($loc['address_town'] == '') {
+            $loc['address_town'] = $loc["address_st"];
+        }
+
+        $sesh = array( "loc" => $loc, "date" => $request->date );
 
         return view('contacts.add', [
             'users' => User::orderBy('created_at', 'asc')->get(),
-            'addresses' => $addresses,
             'locale' => $locale,
+            'sesh' => $sesh
         ]);
-
-
     }
 
     public function destroy(Request $request, Contact $contact) {
