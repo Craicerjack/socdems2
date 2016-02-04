@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 | kernel and includes session state, CSRF protection, and more.
 |
 */
+// CORS
+header('Access-Control-Allow-Origin: http://socdems.carlostighe.com');
+header('Access-Control-Allow-Credentials: true');
+
 
 Route::group(['middleware' => ['web']], function () {
     Route::get('/', function () { return view('welcome'); });

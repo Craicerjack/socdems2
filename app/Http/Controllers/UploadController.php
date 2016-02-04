@@ -47,7 +47,6 @@ class UploadController extends Controller {
     }
 
     public function createVoter($data, $addressId, $address) {
-        Log::info(array($address, $data[1], $data[2]));
         $voter = new Voter();
         $voter->first_name = trim($data[0]);
         $voter->last_name = trim($data[1]);
@@ -95,7 +94,7 @@ class UploadController extends Controller {
             $path = public_path();
             $request->file('userfile')->move($path.'/uploads', $filename);
             if ( ($handle = fopen(public_path().'/uploads/'.$filename, 'r')) !== FALSE ) {
-                while ( ($data = fgetcsv($handle, 1000, ',')) !==FALSE ) {
+                while ( ($data = fgetcsv($handle, 10000, ',')) !==FALSE ) {
                     // Voter
                     // data[0] = first name
                     // data[1] = last name

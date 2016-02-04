@@ -23,10 +23,6 @@ class ContactController extends Controller
         $this->contacts = $contacts;
     }
 
-    public function getLocale() {
-        Log::info($this);
-    }
-
     public function index(Request $request) {
         // $contacts = Contact::with('address', 'user')->getContacts();
         // return view('contacts.index', compact($contacts));
@@ -37,28 +33,46 @@ class ContactController extends Controller
 
     public function returnJson(Request $request) {
         try{
-           $statusCode = 200;
-           $addresses = Address::orderBy('created_at', 'asc')->get();
-       } catch (Exception $e) {
-           $statusCode = 400;
-       } finally {
-           return response()->json($addresses);
-       }
+            $statusCode = 200;
+            Log::info($request);
+            Log::info($request->type);
+            if($request->type ==  "electoral_div"){
+                $addresses = Address::where("electoral_div", "=", $request->value)->get();
+            } else if($request->type ==  "address"){
+                $ads = Address::orderBy('created_at', 'asc')->get();
+                $addresses = array();
+                foreach ($ads as $address) {
+                    if($address["address_town"] == $request->value || $address["address_st"] == $request->value) {
+
+                        array_push($addresses, $address);
+                     };
+                 }
+            }
+        } catch (Exception $e) {
+            $statusCode = 400;
+        } finally {
+            Log::info($addresses);
+            return response()->json($addresses);
+        }
+    }
+
+    public function getElectDivs($addresses) {
+        $electDivs = array();
+        foreach ($addresses as $add) {
+            array_push($electDivs, $add->electoral_div);
+        }
+        $electDivs = array_unique($electDivs);
+        return $electDivs;
     }
 
     public function addContact(Request $request) {
         $addresses = Address::orderBy('created_at', 'asc')->get();
-        $locale = array();
+        $electDivs = $this->getElectDivs($addresses);
 
-        foreach ($addresses as $add) {
-            ($add['address_town'] == '') ? $at = $add["address_st"] : $at = $add['address_town'];
-            array_push($locale, $at);
-        }
-        $locale = array_unique($locale);
         return view('contacts.add', [
             'users' => User::orderBy('created_at', 'asc')->get(),
             'addresses' => $addresses,
-            'locale' => $locale,
+            'electDivs' => $electDivs,
         ]);
     }
 
@@ -69,7 +83,6 @@ class ContactController extends Controller
     }
 
     public function store(Request $request) {
-
         if( is_numeric( $request->user_id ) == false){
             $name = explode(" ", $request->user_id);
             $user = User::where('email', '=', $name[0].$name[1]."@example.com")->first();
@@ -80,16 +93,12 @@ class ContactController extends Controller
                 $user->email = $name[0].$name[1]."@example.com";
                 $user->save();
             }
+        } else {
+            $user = User::where('id', '=', $request->user_id )->first();
         }
 
-        // set the locale
         $addresses = Address::orderBy('created_at', 'asc')->get();
-        $locale = array();
-        foreach ($addresses as $add) {
-            ($add['address_town'] == '') ? $at = $add["address_st"] : $at = $add['address_town'];
-            array_push($locale, $at);
-        }
-        $locale = array_unique($locale);
+        $electDivs = $this->getElectDivs($addresses);
 
         $this->validate($request, [
             'date' => 'required',
@@ -104,17 +113,17 @@ class ContactController extends Controller
         $contact->address_id = $request->address;
         $contact->save();
 
-        $loc = Address::where('id', $request->address )->first();
+        $loc = Address::where('id', '=', $request->address )->first();
         if ($loc['address_town'] == '') {
             $loc['address_town'] = $loc["address_st"];
         }
 
-        $sesh = array( "loc" => $loc, "date" => $request->date );
+        $sesh = array( "loc" => $loc, "date" => $request->date, 'user' => $user );
 
         return view('contacts.add', [
             'users' => User::orderBy('created_at', 'asc')->get(),
-            'locale' => $locale,
-            'sesh' => $sesh
+            'sesh' => $sesh,
+            'electDivs' => $electDivs,
         ]);
     }
 

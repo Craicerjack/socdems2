@@ -1,51 +1,64 @@
 $(document).ready( function() {
-    var addresses = [], addressList = [];
+    var areas = [], streets = [], addressList = [];
 
-    function formatData() {
-        var returnData = addressList.filter(addressMatch);
-        returnData.forEach(function(item) {
-            var value = { "id": item.id, "text": item.address_st+", "+item.address_no }
-            addresses.push(value);
+    function getAreas() {
+        var check = $('#address-list-0').val();
+        $.ajax({
+            url: "http://localhost/~carlos/sidepros/laravel/public/api/contacts",
+            data: {
+                "type": "electoral_div",
+                "value" : check
+            }
+        }).done(function( data, status, jqXHR ){
+            data.forEach(function(item) {
+                (item.address_town === "") ?  item.address_town = item["address_st"] : item.address_town = item['address_town'];
+                if($.inArray(item.address_town, areas) === -1) {
+                    areas.push(item.address_town);
+                }
+            });
+            $('#address-list-1').select2({ data: areas });
+        }).then(function() {
+            getStreets();
         });
     }
 
-    function addressMatch(value) {
-        var check = $('#address-list-1').val();
-        if ( value.address_st.indexOf(check) !== -1 || value.address_town.indexOf(check) !== -1 ) {
-            return value;
+    function getStreets() {
+        var check = $('#address-list-1').val() || areas[0];
+        $.ajax({
+            url: "http://localhost/~carlos/sidepros/laravel/public/api/contacts",
+            // url: "http://socdems.carlostighe.com/public/api/contacts",
+            data: {
+                "type": "address",
+                "value" : check
+            }
+        }).done(function( data, status, jqXHR ){
+            data.forEach(function(item) {
+                var value = { "id": item.id, "text": item.address_st+", "+item.address_no };
+                streets.push(value);
+            });
+            $('#address-list-2').select2({ data: streets });
+        });
+    }
+
+    function resetValues(value) {
+        if(value === "areas") {
+            areas = [];
+            getAreas();
+            $('#address-list-1').select2().empty();
+            $('#address-list-1').select2({ data: areas });
+            resetValues("streets");
+        }
+        if(value === "streets") {
+            streets = [];
+            getStreets();
+            $('#address-list-2').select2().empty();
+            $('#address-list-2').select2({ data: streets});
         }
     }
 
-    $.get("http://localhost/~carlos/laravel/public/api/contacts").then(function( data, status, jqXHR ){
-        data.forEach(function(item) {
-            addressList.push(item);
-        });
-        formatData();
-    }).then(function () {
-        $('#address-list-1').select2();
-        $('#address-list-2').select2({
-            data: addresses,
-            placeholder: "Select an option",
-        });
-        $('#user-list').select2({
-            tags: true
-        });
-    });
+    $('#user-list').select2({ tags: true });
+    getAreas();
+    $( "#address-list-0" ).change(function() { resetValues("areas") });
+    $( "#address-list-1" ).change(function() { resetValues("streets") });
 
-    $( "#address-list-1" ).change(function() {
-        addresses = [];
-        formatData();
-        $('#address-list-2').select2().empty();
-        $('#address-list-2').select2({ data: addresses});
-    });
-
-    $('#address-list-1').select2();
-    $('#address-list-2').select2({
-        data: addresses,
-        tags: "true",
-        placeholder: "Select an option",
-    });
-    $('#user-list').select2({
-        tags: true
-    });
 });

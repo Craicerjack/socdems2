@@ -30,7 +30,7 @@
         }
         .title {
             font-weight: 100;
-            font-size: 96px;
+            font-size: 62px;
             color: #752f8b;
         }
         .navbar-header {
@@ -97,8 +97,8 @@
 
     <!-- JavaScripts -->
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/vendors/jquery-2.2.0.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/vendors/bootstrap-3.3.6.min.js') }}"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel='stylesheet' type='text/css'>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />

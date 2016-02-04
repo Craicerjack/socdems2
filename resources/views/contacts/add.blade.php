@@ -16,6 +16,9 @@
                             <label class="col-md-4 control-label">Choose User:</label>
                             <div class="col-md-6">
                                 <select id="user-list" class="form-control" name='user_id'>
+                                    @if( !empty($sesh) )
+                                        <option value="{{ $sesh['user']['id'] }}" >{{ $sesh['user']['first_name'] }} {{ $sesh['user']['last_name'] }}</option>
+                                    @endif
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}" >{{ $user['first_name'] }} {{ $user['last_name']}}</option>
                                     @endforeach
@@ -24,12 +27,27 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-md-4 control-label">Choose Electoral Area:</label>
+                            <div class="col-md-6">
+                                <select id="address-list-0" class="form-control" name="address">
+                                    @foreach ($electDivs as $ediv)
+                                        <option value="{{ $ediv }}" >{{ $ediv }}</option>
+                                    @endforeach
+                                    @if( !empty($sesh) )
+                                        <option value="{{ $sesh['loc']['electoral_div'] }}" selected="selected">{{ $sesh['loc']['electoral_div'] }}</option>
+                                    @endif
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-4 control-label">Choose Area:</label>
                             <div class="col-md-6">
                                 <select id="address-list-1" class="form-control" name="address">
-                                    @foreach ($locale as $loc)
-                                        <option value="{{ $loc }}" >{{ $loc }}</option>
-                                    @endforeach
+                                    @if( !empty($sesh) )
+                                        <option value="{{ $sesh['loc']['address_town'] }}" selected="selected">{{ $sesh['loc']['address_town'] }}</option>
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -37,7 +55,7 @@
                         <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">Date</label>
                             <div class="col-md-6">
-                                <input type="date" class="form-control" name="date" value="{{ $sesh['date'] }}">
+                                <input type="date" class="form-control" name="date" value="{{ $sesh['date'] or date('Y-m-d') }}">
                             </div>
                         </div>
 
