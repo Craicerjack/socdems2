@@ -34,8 +34,6 @@ class ContactController extends Controller
     public function returnJson(Request $request) {
         try{
             $statusCode = 200;
-            Log::info($request);
-            Log::info($request->type);
             if($request->type ==  "electoral_div"){
                 $addresses = Address::where("electoral_div", "=", $request->value)->get();
             } else if($request->type ==  "address"){
@@ -43,7 +41,6 @@ class ContactController extends Controller
                 $addresses = array();
                 foreach ($ads as $address) {
                     if($address["address_town"] == $request->value || $address["address_st"] == $request->value) {
-
                         array_push($addresses, $address);
                      };
                  }

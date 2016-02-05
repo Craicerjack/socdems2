@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     <link type="text/css" rel="stylesheet" href="{{ URL::asset('css/app.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ URL::asset('css/font-awesome.min.css') }}">
 
 
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
