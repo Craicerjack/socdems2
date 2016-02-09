@@ -89,8 +89,10 @@
                         <div class="form-group">
                             <label class="col-sm-4 col-sm-offset-1 control-label">Choose Electoral Area:</label>
                             <div class="col-sm-6">
-                                <select id="address-list-0" class="form-control" name="address">
-
+                                <select id="address-list-0" class="form-control" name="area">
+                                    @foreach ($electDivs as $ediv)
+                                        <option value="{{ $ediv }}" >{{ $ediv }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -98,9 +100,14 @@
                         <div class="form-group">
                             <label class="col-sm-4 col-sm-offset-1 control-label">Choose Area:</label>
                             <div class="col-sm-6">
-                                <select id="address-list-1" class="form-control" name="address">
+                                <select id="address-list-1" class="form-control" name="address"></select>
+                            </div>
+                        </div>
 
-                                </select>
+                        <div class="form-group">
+                            <label class="col-sm-4 col-sm-offset-1 control-label">Choose Street:</label>
+                            <div class="col-sm-6">
+                                <select id="address-list-2" class="form-control" name="street"></select>
                             </div>
                         </div>
 
@@ -113,6 +120,7 @@
 </div>
 @endsection
 @section('scripts')
+<script type="text/javascript" src="{{ URL::asset('js/walksheet.js') }}"></script>
 
     <!-- TODO: Current Tasks -->
 @endsection

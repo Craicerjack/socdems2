@@ -17,10 +17,12 @@ use App\Repositories\ContactRepository;
 class ContactController extends Controller
 {
     protected $contacts;
+    protected $addresses;
 
     public function __construct(ContactRepository $contacts) {
         $this->middleware('auth');
         $this->contacts = $contacts;
+        $this->addresses = Address::all();
     }
 
     public function index(Request $request) {
@@ -37,13 +39,22 @@ class ContactController extends Controller
             if($request->type ==  "electoral_div"){
                 $addresses = Address::where("electoral_div", "=", $request->value)->get();
             } else if($request->type ==  "address"){
-                $ads = Address::orderBy('created_at', 'asc')->get();
+                $ads = $this->addresses;
                 $addresses = array();
                 foreach ($ads as $address) {
                     if($address["address_town"] == $request->value || $address["address_st"] == $request->value) {
                         array_push($addresses, $address);
                      };
                  }
+            } else if($request->type ==  "street"){
+                $ads = $this->addresses;
+                $addresses = array();
+                foreach ($ads as $address) {
+                    if($address["address_town"] == $request->value || $address["address_st"] == $request->value) {
+                        array_push($addresses, $address["address_st"]);
+                     };
+                 }
+                 $addresses = array_unique($addresses);
             }
         } catch (Exception $e) {
             $statusCode = 400;
@@ -63,7 +74,7 @@ class ContactController extends Controller
     }
 
     public function addContact(Request $request) {
-        $addresses = Address::orderBy('created_at', 'asc')->get();
+        $addresses = $this->addresses;
         $electDivs = $this->getElectDivs($addresses);
 
         return view('contacts.add', [
@@ -94,7 +105,7 @@ class ContactController extends Controller
             $user = User::where('id', '=', $request->user_id )->first();
         }
 
-        $addresses = Address::orderBy('created_at', 'asc')->get();
+        $addresses = $this->addresses;
         $electDivs = $this->getElectDivs($addresses);
 
         $this->validate($request, [

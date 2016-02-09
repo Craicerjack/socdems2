@@ -17,8 +17,22 @@ class WalksheetController extends Controller
         $this->middleware('auth');
     }
 
+    public function getElectDivs($addresses) {
+        $electDivs = array();
+        foreach ($addresses as $add) {
+            array_push($electDivs, $add->electoral_div);
+        }
+        $electDivs = array_unique($electDivs);
+        return $electDivs;
+    }
+
     public function create() {
-        return view('walksheets.create');
+        $addresses = Address::orderBy('created_at', 'asc')->get();
+        $electDivs = $this->getElectDivs($addresses);
+
+        return view('walksheets.create', [
+            'electDivs' => $electDivs,
+        ]);
 
     }
 
