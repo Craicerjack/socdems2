@@ -33,7 +33,10 @@ class WalksheetController extends Controller
         return view('walksheets.create', [
             'electDivs' => $electDivs,
         ]);
+    }
 
+    public function generate(Request $request) {
+        Log::info($request);
     }
 
 }

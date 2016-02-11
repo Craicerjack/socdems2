@@ -122,6 +122,21 @@
     height:150px;
     border-radius: 6px;
 }
+/*********** MYSTYLES ***********/
+.remove {
+    float: left;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+}
 
 /*********** CHECKBOXES ***********/
 label { font-size: 20px; }

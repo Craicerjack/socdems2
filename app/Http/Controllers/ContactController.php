@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Contact;
 use App\Address;
 use App\User;
-
 use Log;
 use Illuminate\Http\Request;
 
@@ -36,30 +35,47 @@ class ContactController extends Controller
     public function returnJson(Request $request) {
         try{
             $statusCode = 200;
+
             if($request->type ==  "electoral_div"){
-                $addresses = Address::where("electoral_div", "=", $request->value)->get();
-            } else if($request->type ==  "address"){
-                $ads = $this->addresses;
+                $allAddresses = Address::where("electoral_div", "=", $request->value)->get();
+                $uniqueAddresses = array();
+                foreach($allAddresses as $address) {
+                    if ($address['address_town'] == '') {
+                        $address['address_town'] = $address["address_st"];
+                    }
+                    array_push($uniqueAddresses, $address['address_town']);
+                }
+                $uniqueAddresses = array_unique($uniqueAddresses);
                 $addresses = array();
-                foreach ($ads as $address) {
+                foreach ($uniqueAddresses as $key => $value) {
+                    $ad = array('id' => $value, 'text' => $value);
+                    array_push($addresses, $ad);
+                }
+
+            } else if($request->type ==  "address"){
+                $addresses = array();
+                foreach ($this->addresses as $address) {
                     if($address["address_town"] == $request->value || $address["address_st"] == $request->value) {
                         array_push($addresses, $address);
                      };
                  }
+
             } else if($request->type ==  "street"){
-                $ads = $this->addresses;
+                $adsArray = array();
                 $addresses = array();
-                foreach ($ads as $address) {
+                foreach ($this->addresses as $address) {
                     if($address["address_town"] == $request->value || $address["address_st"] == $request->value) {
-                        array_push($addresses, $address["address_st"]);
+                        array_push($adsArray, $address["address_st"]);
                      };
                  }
-                 $addresses = array_unique($addresses);
+                 $vals = array_count_values($adsArray);
+                 foreach ($vals as $key => $val) {
+                    array_push($addresses, array( 'id' => $key, 'text' => $key, 'occurences' => $val ));
+                 }
             }
         } catch (Exception $e) {
             $statusCode = 400;
         } finally {
-            Log::info($addresses);
             return response()->json($addresses);
         }
     }

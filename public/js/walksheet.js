@@ -1,72 +1,58 @@
 $(document).ready(function() {
-    var areas = [], streets = [];
+    var areas= [], streets = [];
+    var electDivs = $("#address-list-0");
+    var area = $("#address-list-1");
+    var street = $("#address-list-2");
 
-    function getAreas(){
-        var check = $("#address-list-0").val();
+    electDivs.on("select2:select", getAreas);
+    area.on("select2:select", getStreets);
+    street.on("select2:select", addSelection);
+    $("#picks").on('click', '.remove', removeSelection);
+    $('form').submit(addSelectionsToForm);
+
+    electDivs.select2();
+    getAreas();
+
+    function removeSelection(selection) {
+        $(this).parent().remove();
+    }
+
+    function addSelection(selection) {
+        var data = selection.params.data;
+        var li = '<li class="list-group-item" value="'+ data.text +'"><span class="remove btn-default">x</span><span class="badge">'+data.occurences+'</span>'+data.text+'</li>';
+        $("#picks").append(li);
+    }
+
+    function addSelectionsToForm() {
+        var streets = [];
+        $('#picks li').each(function() { streets.push($(this).attr('value')) });
+        $(this).append('<input type="hidden" name="streets" value="'+streets+'" /> ');
+        return true;
+    }
+
+    function getAreas() {
+        area.select2().empty();
         $.ajax({
             url: "http://localhost/~carlos/sidepros/laravel/public/api/contacts",
             // url: "http://socdems.carlostighe.com/public/api/contacts",
-            data: { type: "electoral_div", "value": check }
+            data: { type: "electoral_div", "value": electDivs.val() }
         }).done(function( data, status, jqXHR ) {
-            data.forEach(function(item) {
-                (item.address_town === "") ?  item.address_town = item["address_st"] : item.address_town = item['address_town'];
-                if($.inArray(item.address_town, areas) === -1) {
-                    areas.push(item.address_town);
-                }
-            });
-            $('#address-list-1').select2({ data: areas });
-        }).then(function() {
+            area.select2({ data: data });
             getStreets();
         });
     }
 
     function getStreets() {
-        var check = $('#address-list-1').val() || areas[0];
-        var list = $('#address-list-2').select2();
-        // var $exampleMulti = $(".js-example-programmatic-multi").select2();
-        var sts = arguments[0];
-
-            console.log(sts , " - sts ");
-        console.log(check , " -  test  ");
+        var sts = street.val();
+        street.select2().empty();
         $.ajax({
             url: "http://localhost/~carlos/sidepros/laravel/public/api/contacts",
             // url: "http://socdems.carlostighe.com/public/api/contacts",
-            data: {
-                "type": "street",
-                "value" : check
-            }
-        }).done(function( data, status, jqXHR ){
-            console.log(streets , " - streets ");
-            $.each(data, function(key, value) {
-                streets.push(value);
-                // streets.push({"id": key, "text": value });
+            data: { type: "street", "value": area.val() }
+        }).done(function( data, status, jqXHR ) {
+            street.select2({
+                data: data,
             });
-            console.log(streets  , " - streets after ");
-            console.log(sts , " - sts in ajax callback ");
-            $('#address-list-2').select2({ data: streets, multiple: true, tags: true, val: sts });
         });
     }
-
-
-    function resetValues(value) {
-        if(value === "areas") {
-            areas = [];
-            getAreas();
-            $('#address-list-1').select2().empty();
-            $('#address-list-1').select2({ data: areas });
-            resetValues("streets");
-        }
-        if(value === "streets") {
-            var sts = $('#address-list-2').val();
-            $('#address-list-2').select2().empty();
-            $('#address-list-2').select2().val(sts);
-            streets = [];
-            getStreets(sts);
-        }
-    }
-    getAreas();
-
-    $( "#address-list-0" ).change(function() { resetValues("areas") });
-    $( "#address-list-1" ).change(function() { resetValues("streets") });
-
 });

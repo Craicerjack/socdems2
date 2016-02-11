@@ -40,7 +40,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::delete('/contact/{contact}', 'ContactController@destroy');
 
     Route::get('/walksheets', 'WalksheetController@create');
-    Route::get('/walksheets/{walksheet}', 'WalksheetController@view');
+    Route::post('/walksheets', 'WalksheetController@generate');
 
     // Authentication Routes...
     Route::get('auth/login', 'Auth\AuthController@getLogin');
