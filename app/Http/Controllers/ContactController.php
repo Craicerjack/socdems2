@@ -25,8 +25,6 @@ class ContactController extends Controller
     }
 
     public function index(Request $request) {
-        // $contacts = Contact::with('address', 'user')->getContacts();
-        // return view('contacts.index', compact($contacts));
         return view('contacts.index', [
             'contacts' => $this->contacts->getContacts(),
         ]);

@@ -10,11 +10,18 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Repositories\ContactRepository;
 
-class WalksheetController extends Controller
-{
-    public function __construct() {
+class WalksheetController extends Controller {
+
+    protected $contacts;
+    protected $addresses;
+
+
+    public function __construct(ContactRepository $contacts) {
         $this->middleware('auth');
+        $this->contacts = $contacts;
+        $this->addresses = Address::all();
     }
 
     public function getElectDivs($addresses) {
@@ -36,7 +43,24 @@ class WalksheetController extends Controller
     }
 
     public function generate(Request $request) {
-        Log::info($request);
+        $addressArray = array();
+        $streetsArray = explode(',', $request->streets);
+        Log::info($streetsArray);
+        foreach($streetsArray as $st) {
+            $street = array(
+                'street' => $st,
+                'houses' => array(),
+            );
+            foreach($this->addresses as $address) {
+                if ($st == $address["address_st"]) {
+                    array_push($street["houses"], $address["address_no"]);
+                }
+            }
+            array_push($addressArray, $street);
+        }
+        return view('walksheets.walksheet', [
+            'streets' => $addressArray,
+        ]);
     }
 
 }

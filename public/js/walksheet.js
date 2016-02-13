@@ -19,6 +19,7 @@ $(document).ready(function() {
 
     function addSelection(selection) {
         var data = selection.params.data;
+        console.log(data  , " - data ");
         var li = '<li class="list-group-item" value="'+ data.text +'"><span class="remove btn-default">x</span><span class="badge">'+data.occurences+'</span>'+data.text+'</li>';
         $("#picks").append(li);
     }
@@ -52,6 +53,7 @@ $(document).ready(function() {
         }).done(function( data, status, jqXHR ) {
             street.select2({
                 data: data,
+                multiple: true
             });
         });
     }
