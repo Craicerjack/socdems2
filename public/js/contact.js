@@ -1,64 +1,39 @@
 $(document).ready( function() {
-    var areas = [], streets = [], addressList = [];
+    var areas= [], streets = [];
+    var electDivs = $("#address-list-0");
+    var area = $("#address-list-1");
+    var street = $("#address-list-2");
+
+    $('#user-list').select2({ tags: true });
+    electDivs.on("select2:select", getAreas);
+    area.on("select2:select", getStreets);
+    electDivs.select2();
+    getAreas();
 
     function getAreas() {
-        var check = $('#address-list-0').val();
+        area.select2().empty();
         $.ajax({
             url: "http://localhost/~carlos/sidepros/laravel/public/api/contacts",
-            data: {
-                "type": "electoral_div",
-                "value" : check
-            }
-        }).done(function( data, status, jqXHR ){
-            data.forEach(function(item) {
-                (item.address_town === "") ?  item.address_town = item["address_st"] : item.address_town = item['address_town'];
-                if($.inArray(item.address_town, areas) === -1) {
-                    areas.push(item.address_town);
-                }
-            });
-            $('#address-list-1').select2({ data: areas });
-        }).then(function() {
+            // url: "http://socdems.carlostighe.com/public/api/contacts",
+            data: { type: "electoral_div", "value": electDivs.val() }
+        }).done(function( data, status, jqXHR ) {
+            area.select2({ data: data });
             getStreets();
         });
     }
 
     function getStreets() {
-        var check = $('#address-list-1').val() || areas[0];
+        var sts = street.val();
+        street.select2().empty();
         $.ajax({
             url: "http://localhost/~carlos/sidepros/laravel/public/api/contacts",
             // url: "http://socdems.carlostighe.com/public/api/contacts",
-            data: {
-                "type": "address",
-                "value" : check
-            }
-        }).done(function( data, status, jqXHR ){
-            data.forEach(function(item) {
-                var value = { "id": item.id, "text": item.address_st+", "+item.address_no };
-                streets.push(value);
+            data: { type: "street", "value": area.val() }
+        }).done(function( data, status, jqXHR ) {
+            street.select2({
+                data: data,
+                multiple: true
             });
-            $('#address-list-2').select2({ data: streets });
         });
     }
-
-    function resetValues(value) {
-        if(value === "areas") {
-            areas = [];
-            getAreas();
-            $('#address-list-1').select2().empty();
-            $('#address-list-1').select2({ data: areas });
-            resetValues("streets");
-        }
-        if(value === "streets") {
-            streets = [];
-            getStreets();
-            $('#address-list-2').select2().empty();
-            $('#address-list-2').select2({ data: streets});
-        }
-    }
-
-    $('#user-list').select2({ tags: true });
-    getAreas();
-    $( "#address-list-0" ).change(function() { resetValues("areas") });
-    $( "#address-list-1" ).change(function() { resetValues("streets") });
-
 });

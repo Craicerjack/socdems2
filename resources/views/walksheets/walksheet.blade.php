@@ -9,21 +9,21 @@
             <h3 class="panel-title">{{ $street["street"] }}</h3>
         </div>
         <div class="panel-body">
-            <table class="table table-condensed table-striped">
-                <thead>
-                <tr>
-                    <th>House Name</th>
-                    <th>Results</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($street["houses"] as $house)
-                    <tr>
-                        <td>{{ $house }}</td>
-                    </tr>
+            <div class="row">
+                <div class="col-xs-2"><h4>House</h4></div>
+                <div class="col-xs-10"><h4>Results - Support Lvl</h4></div>
+            </div>
+            @foreach ($street["houses"] as $house)
+            <div class="row striped">
+                <div class="col-xs-2">{{ $house["house"] }}</div>
+                @foreach ($house["contacts"] as $contact)
+                    <div class="col-xs-1">
+                        {{$contact->result}} - {{$contact->support_lvl}}
+                    </div>
                 @endforeach
-                </tbody>
-            </table>
+
+            </div>
+            @endforeach
         </div>
     </div>
     @endforeach

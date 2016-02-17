@@ -138,6 +138,10 @@
     vertical-align: middle;
 }
 
+.striped:nth-child(odd){
+  background-color: #aaaaaa;
+}
+
 /*********** CHECKBOXES ***********/
 label { font-size: 20px; }
 
